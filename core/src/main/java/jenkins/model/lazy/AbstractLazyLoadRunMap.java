@@ -215,6 +215,7 @@ public abstract class AbstractLazyLoadRunMap<R> extends AbstractMap<Integer,R> i
      *
      * This is a bit more sophisticated version of forcing GC.
      * Primarily for debugging and testing lazy loading behaviour.
+     * @since 1.507
      */
     public void purgeCache() {
         index = new Index();
@@ -350,7 +351,7 @@ public abstract class AbstractLazyLoadRunMap<R> extends AbstractMap<Integer,R> i
      *      defines what we mean by "nearby" above.
      *      If EXACT, find #N or return null.
      *      If ASC, finds the closest #M that satisfies M>=N.
-     *      If DESC, finds the closest #M that satisfies M<=N.
+     *      If DESC, finds the closest #M that satisfies M&lt;=N.
      */
     public R search(final int n, final Direction d) {
         Entry<Integer, BuildReference<R>> c = index.ceilingEntry(n);
@@ -436,8 +437,8 @@ public abstract class AbstractLazyLoadRunMap<R> extends AbstractMap<Integer,R> i
             // assertion error, but we are so far unable to get to the bottom of this bug.
             // but don't let this kill the loading the hard way
             String msg = String.format(
-                    "Assertion error: failing to load #%d %s: lo=%d,hi=%d,size=%d,size2=%d",
-                    n, d, lo, hi, idOnDisk.size(), initialSize);
+                    "JENKINS-15652 Assertion error: failing to load %s #%d %s: lo=%d,hi=%d,size=%d,size2=%d",
+                    dir, n, d, lo, hi, idOnDisk.size(), initialSize);
             LOGGER.log(Level.WARNING, msg,new Exception());
             throw new ArrayIndexOutOfBoundsException(msg);
         }
@@ -448,8 +449,8 @@ public abstract class AbstractLazyLoadRunMap<R> extends AbstractMap<Integer,R> i
                 // assertion error, but we are so far unable to get to the bottom of this bug.
                 // but don't let this kill the loading the hard way
                 String msg = String.format(
-                        "Assertion error: failing to load #%d %s: lo=%d,hi=%d,pivot=%d,size=%d (initial:lo=%d,hi=%d,size=%d)",
-                        n, d, lo, hi, pivot, idOnDisk.size(), initialLo, initialHi, initialSize);
+                        "JENKINS-15652Assertion error: failing to load %s #%d %s: lo=%d,hi=%d,pivot=%d,size=%d (initial:lo=%d,hi=%d,size=%d)",
+                        dir, n, d, lo, hi, pivot, idOnDisk.size(), initialLo, initialHi, initialSize);
                 LOGGER.log(Level.WARNING, msg,new Exception());
                 throw new ArrayIndexOutOfBoundsException(msg);
             }
@@ -489,8 +490,8 @@ public abstract class AbstractLazyLoadRunMap<R> extends AbstractMap<Integer,R> i
                 // assertion error, but we are so far unable to get to the bottom of this bug.
                 // but don't let this kill the loading the hard way
                 LOGGER.log(Level.WARNING, String.format(
-                        "Assertion error: failing to load #%d %s: lo=%d,hi=%d,size=%d (initial:lo=%d,hi=%d,size=%d)",
-                        n,d,lo,hi,idOnDisk.size(), initialLo,initialHi,initialSize),new Exception());
+                        "JENKINS-15652 Assertion error: failing to load %s #%d %s: lo=%d,hi=%d,size=%d (initial:lo=%d,hi=%d,size=%d)",
+                        dir, n,d,lo,hi,idOnDisk.size(), initialLo,initialHi,initialSize),new Exception());
                 return null;
             }
             return getById(idOnDisk.get(lo-1));
