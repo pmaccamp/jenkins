@@ -36,3 +36,6 @@ jenkins_*.build
 jenkins_*.changes
 *.deb
 push-build.sh
+
+nbactions.xml
+core/nbactions.xml
